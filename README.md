@@ -72,7 +72,7 @@ TIE.sendInput(url: string, sessionId: string, inputData: object, [callback: func
 
 **inputData**: An object taking the shape:
 
-```json
+```javascript
 {
   text: "Some input text",
   someParam: "foo",
