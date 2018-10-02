@@ -1,3 +1,5 @@
+'use strict';
+
 const callbackOrPromise = require('./utils/callback-or-promise');
 const http = require('./utils/http');
 const prune = require('./utils/prune');

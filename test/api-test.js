@@ -1,3 +1,5 @@
+'use strict';
+
 const fetchMock = require('fetch-mock');
 const querystring = require('querystring');
 const TIE = require('../src/tie-api-client');

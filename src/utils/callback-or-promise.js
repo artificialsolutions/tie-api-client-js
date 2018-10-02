@@ -1,3 +1,5 @@
+'use strict';
+
 const hasCallback = (fn, args) => fn.length === args.length;
 
 const padArgs = (args, arity) => Array.from(new Array(arity), (_, i) => args[i]);
