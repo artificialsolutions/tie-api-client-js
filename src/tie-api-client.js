@@ -23,9 +23,8 @@ const requestBody = (body) => {
 function close(teneoEngineUrl, sessionId, cb) {
   const endSessionUrl = `${formatEngineUrl(teneoEngineUrl)}endsession`;
   const headers = sessionId ? { 'Cookie': `JSESSIONID=${sessionId}` } : {};
-  const options = { parseAsText: true };
 
-  return http.post(endSessionUrl, requestBody(), headers, options)
+  return http.post(endSessionUrl, requestBody(), headers)
     .then((response) => cb(null, response.body))
     .catch((error) => cb(error));
 }

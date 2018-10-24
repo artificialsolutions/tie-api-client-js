@@ -16,7 +16,7 @@ const generateHeaders = (additionalHeaders) => {
 };
 
 module.exports = {
-  post: (url, data, headers = {}, options = {}) => {
+  post: (url, data, headers = {}) => {
     const request = fetch(url, {
       headers: generateHeaders(headers),
       method: 'POST',
@@ -29,8 +29,6 @@ module.exports = {
         if (response.status >= 400) {
           throw new Error(`Received error code ${response.status}`);
         }
-
-        if (options.parseAsText) return response.text();
 
         return response.json();
       });
