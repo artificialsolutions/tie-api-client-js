@@ -12,6 +12,7 @@ describe('TIE API Client', () => {
   const expectedPayload = { userinput: 'Hej där!', viewname: 'tieapi', viewtype: 'tieapi' };
   const teneoEngineUrl = 'https://teneo.engine.com/';
   const endSessionUrl = `${teneoEngineUrl}endsession`;
+  const urlWithSession = (url, sessionId) => `${url};jsessionid=${sessionId}`;
 
   it('should exist', () => {
     expect(TIE).to.not.be.undefined;
@@ -25,22 +26,36 @@ describe('TIE API Client', () => {
     it('should POST the input to the specified url', (done) => {
       fetchMock.post(teneoEngineUrl, 200);
 
-      TIE.sendInput(teneoEngineUrl, 'session-id', { text: 'Hej där!' }, () => {
+      TIE.sendInput(teneoEngineUrl, null, { text: 'Hej där!' }, () => {
         const [, request] = fetchMock.lastCall(teneoEngineUrl);
         expect(querystring.parse(request.body)).to.eql(expectedPayload);
         done();
       });
     });
 
-    it('should POST with the correct headers', (done) => {
-      fetchMock.post(teneoEngineUrl, 200);
+    it('should append the session id to the url if passed', (done) => {
+      const sessionId = 'D3CE28F6558DB88B8AFCE3F36E90920B';
+      const expectedUrl = urlWithSession(teneoEngineUrl, sessionId);
 
-      TIE.sendInput(teneoEngineUrl, 'session-id', { text: 'Hello there' }, () => {
-        const [, { headers }] = fetchMock.lastCall(teneoEngineUrl);
+      fetchMock.post(expectedUrl, 200);
+
+      TIE.sendInput(teneoEngineUrl, sessionId, { text: 'Hello world' }, () => {
+        expect(fetchMock.lastUrl()).to.eql(expectedUrl);
+        done();
+      });
+    });
+
+    it('should POST with the correct headers', (done) => {
+      const sessionId = 'D3CE28F6558DB88B8AFCE3F36E90920B';
+      const expectedUrl = urlWithSession(teneoEngineUrl, sessionId);
+      fetchMock.post(expectedUrl, 200);
+
+      TIE.sendInput(teneoEngineUrl, sessionId, { text: 'Hello there' }, () => {
+        const [, { headers }] = fetchMock.lastCall(expectedUrl);
 
         expect(headers.get('Accept')).to.equal('application/json;charset=UTF-8');
         expect(headers.get('Content-Type')).to.equal('application/x-www-form-urlencoded;charset=UTF-8');
-        expect(headers.get('Cookie')).to.equal('JSESSIONID=session-id');
+        expect(headers.get('Cookie')).to.equal(`JSESSIONID=${sessionId}`);
         done();
       });
     });
@@ -51,7 +66,7 @@ describe('TIE API Client', () => {
         foo: 'bar', baz: '42'
       });
 
-      TIE.sendInput(teneoEngineUrl, 'session-id', { text: 'Hej där!', foo: 'bar', baz: 42 }, () => {
+      TIE.sendInput(teneoEngineUrl, null, { text: 'Hej där!', foo: 'bar', baz: 42 }, () => {
         const [, request] = fetchMock.lastCall(teneoEngineUrl);
         const body = querystring.parse(request.body);
         expect(body).to.eql(expected);
@@ -70,7 +85,7 @@ describe('TIE API Client', () => {
         clientOrigin: 'http://some-origin'
       };
 
-      TIE.sendInput(teneoEngineUrl, 'session-id', inputData, () => {
+      TIE.sendInput(teneoEngineUrl, null, inputData, () => {
         const [, request] = fetchMock.lastCall(teneoEngineUrl);
         expect(querystring.parse(request.body)).to.eql(expectedPayload);
         done();
@@ -80,15 +95,15 @@ describe('TIE API Client', () => {
     it('should return a Promise if no callback is passed', async () => {
       fetchMock.post(teneoEngineUrl, {});
 
-      await TIE.sendInput(teneoEngineUrl, 'session-id', { text: 'Hej där!' });
+      await TIE.sendInput(teneoEngineUrl, null, { text: 'Hej där!' });
 
       const [, request] = fetchMock.lastCall(teneoEngineUrl);
       expect(querystring.parse(request.body)).to.eql(expectedPayload);
-      expect(request.headers.get('Cookie')).to.equal('JSESSIONID=session-id');
     });
 
     it('should pass on the Engine response to the caller', async () => {
       const sessionId = '9CB85D4871939D0FD1E05BD26C456B06';
+      const expectedUrl = urlWithSession(teneoEngineUrl, sessionId);
       const responseBody = {
         status: 0,
         input: { text: 'Hej där!', parameters: {} },
@@ -96,11 +111,11 @@ describe('TIE API Client', () => {
         sessionId
       };
 
-      fetchMock.post(teneoEngineUrl, {
+      fetchMock.post(expectedUrl, {
         body: responseBody
       });
 
-      const response = await TIE.sendInput(teneoEngineUrl, null, { text: 'Hej där!' });
+      const response = await TIE.sendInput(teneoEngineUrl, sessionId, { text: 'Hej där!' });
       expect(response).to.eql(responseBody);
     });
 
@@ -139,11 +154,14 @@ describe('TIE API Client', () => {
       });
 
       it('should send the client origin as a parameter', async () => {
-        fetchMock.post(teneoEngineUrl, {});
+        const sessionId = 'D3CE28F6558DB88B8AFCE3F36E90920B';
+        const expectedUrl = urlWithSession(teneoEngineUrl, sessionId);
 
-        await TIE.sendInput(teneoEngineUrl, 'session-id', { text: 'Hej där!' });
+        fetchMock.post(expectedUrl, {});
 
-        const [, request] = fetchMock.lastCall(teneoEngineUrl);
+        await TIE.sendInput(teneoEngineUrl, sessionId, { text: 'Hej där!' });
+
+        const [, request] = fetchMock.lastCall(expectedUrl);
         const expected = Object.assign({}, expectedPayload, { clientOrigin });
 
         expect(querystring.parse(request.body)).to.eql(expected);
@@ -153,25 +171,31 @@ describe('TIE API Client', () => {
 
   describe('#close', () => {
     it('should end the current session', (done) => {
-      fetchMock.post(endSessionUrl, 200);
+      const sessionId = 'D3CE28F6558DB88B8AFCE3F36E90920B';
+      const expectedUrl = urlWithSession(endSessionUrl, sessionId);
 
-      TIE.close(teneoEngineUrl, 'session-id', () => {
-        const [, { headers }] = fetchMock.lastCall(endSessionUrl);
-        expect(headers.get('Cookie')).to.equal('JSESSIONID=session-id');
+      fetchMock.post(expectedUrl, 200);
+
+      TIE.close(teneoEngineUrl, sessionId, () => {
+        const [, { headers }] = fetchMock.lastCall(expectedUrl);
+        expect(headers.get('Cookie')).to.equal(`JSESSIONID=${sessionId}`);
         done();
       });
     });
 
     it('should return a Promise if no callback is passed', async () => {
-      fetchMock.post(endSessionUrl, {});
+      const sessionId = 'D3CE28F6558DB88B8AFCE3F36E90920B';
+      const expectedUrl = urlWithSession(endSessionUrl, sessionId);
 
-      const request = TIE.close(teneoEngineUrl, 'session-id');
+      fetchMock.post(expectedUrl, {});
+
+      const request = TIE.close(teneoEngineUrl, sessionId);
       expect(request).to.be.a('Promise');
 
       await request;
 
-      const [, { headers }] = fetchMock.lastCall(endSessionUrl);
-      expect(headers.get('Cookie')).to.equal('JSESSIONID=session-id');
+      const [, { headers }] = fetchMock.lastCall(expectedUrl);
+      expect(headers.get('Cookie')).to.equal(`JSESSIONID=${sessionId}`);
     });
 
     it('should return a Promise if no sessionId and no callback are passed', async () => {
@@ -188,26 +212,32 @@ describe('TIE API Client', () => {
 
   describe('#init', () => {
     it('should return a version of the API with the Teneo Engine URL prefilled for #sendInput', (done) => {
-      fetchMock.post(teneoEngineUrl, 200);
+      const sessionId = 'D3CE28F6558DB88B8AFCE3F36E90920B';
+      const expectedUrl = urlWithSession(teneoEngineUrl, sessionId);
+
+      fetchMock.post(expectedUrl, 200);
 
       const tieApi = TIE.init(teneoEngineUrl);
 
-      tieApi.sendInput('session-id', { text: 'Hej där!' }, () => {
-        const [, request] = fetchMock.lastCall(teneoEngineUrl);
+      tieApi.sendInput(sessionId, { text: 'Hej där!' }, () => {
+        const [, request] = fetchMock.lastCall(expectedUrl);
         expect(querystring.parse(request.body)).to.eql(expectedPayload);
-        expect(request.headers.get('Cookie')).to.equal('JSESSIONID=session-id');
+        expect(request.headers.get('Cookie')).to.equal(`JSESSIONID=${sessionId}`);
         done();
       });
     });
 
     it('should return a version of the API with the Teneo Engine URL prefilled for #close', (done) => {
-      fetchMock.post(endSessionUrl, 200);
+      const sessionId = 'D3CE28F6558DB88B8AFCE3F36E90920B';
+      const expectedUrl = urlWithSession(endSessionUrl, sessionId);
+
+      fetchMock.post(expectedUrl, 200);
 
       const tieApi = TIE.init(teneoEngineUrl);
 
-      tieApi.close('session-id', () => {
-        const [, { headers }] = fetchMock.lastCall(endSessionUrl);
-        expect(headers.get('Cookie')).to.equal('JSESSIONID=session-id');
+      tieApi.close(sessionId, () => {
+        const [, { headers }] = fetchMock.lastCall(expectedUrl);
+        expect(headers.get('Cookie')).to.equal(`JSESSIONID=${sessionId}`);
         done();
       });
     });
