@@ -9,7 +9,7 @@ describe('TIE API Client', () => {
     fetchMock.restore();
   });
 
-  const expectedPayload = { userinput: 'Hej där!', viewname: 'tieapi', viewtype: 'tieapi' };
+  const expectedPayload = { userinput: 'Hej där!', viewtype: 'tieapi' };
   const teneoEngineUrl = 'https://teneo.engine.com/';
   const endSessionUrl = `${teneoEngineUrl}endsession`;
   const urlWithSession = (url, sessionId) => `${url};jsessionid=${sessionId}`;
@@ -74,11 +74,10 @@ describe('TIE API Client', () => {
       });
     });
 
-    it('should NOT pass `viewname`, `viewtype`, `userinput`, `clientOrigin` or `text` as parameters', (done) => {
+    it('should NOT pass `viewtype`, `userinput`, `clientOrigin` or `text` as parameters', (done) => {
       fetchMock.post(teneoEngineUrl, 200);
 
       const inputData = {
-        viewname: 'x',
         viewtype: 'y',
         text: 'Hej där!',
         userinput: 'z',
