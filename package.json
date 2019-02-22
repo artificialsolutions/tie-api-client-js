@@ -7,6 +7,9 @@
     "node": ">=8.12",
     "npm": ">=6"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prebuild": "mkdir -p dist/",
     "build": "browserify --standalone TIE index.js > dist/tie-client.js",
@@ -21,7 +24,7 @@
     "type": "git",
     "url": "https://git.artificial-solutions.com/scm/addon/tie-api-client-js.git"
   },
-  "author": "Jens Ostlund",
+  "author": "Artificial Solutions",
   "license": "Apache-2.0",
   "dependencies": {
     "es6-promise": "^4.2.5",
