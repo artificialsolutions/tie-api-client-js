@@ -10,13 +10,13 @@ const readClientOrigin = () => {
   return document.location.origin;
 };
 
-const getParameters = prune(['viewname', 'viewtype', 'userinput', 'text', 'clientOrigin']);
+const getParameters = prune(['viewtype', 'userinput', 'text', 'clientOrigin']);
 const formatEngineUrl = (url) => url.endsWith('/') ? url : `${url}/`;
 const appendSessionId = (url, sessionId) => sessionId ? `${url};jsessionid=${sessionId}` : url;
 
 const requestBody = (body) => {
   const clientOrigin = readClientOrigin();
-  const jspViewNames = { viewname: 'tieapi', viewtype: 'tieapi' };
+  const jspViewNames = { viewtype: 'tieapi' };
   const parameters = clientOrigin ? Object.assign(jspViewNames, { clientOrigin }) : jspViewNames;
 
   return Object.assign(parameters, body);
