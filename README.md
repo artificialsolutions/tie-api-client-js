@@ -107,7 +107,7 @@ TIE.close(url: string, sessionId: string, [callback: function])
 Returns a version of the Teneo Interaction Engine API with the Teneo Engine url prefilled.
 
 ```javascript
-> const teneoApi = TIE.init('http://some.teneo/engine-instance');
+> const teneoApi = TIE.init('https://some.teneo/engine-instance');
 > teneoApi.sendInput(null, { text: 'Sending some text to the prefilled url' })
     .then(response =>
       console.log(response);
