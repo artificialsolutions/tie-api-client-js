@@ -7,27 +7,29 @@ if [ ! $1 ]; then
   exit 1
 fi
 
-git checkout master
+git checkout master > /dev/null
 
-git pull
+git pull > /dev/null
 
 # can be 'patch' 'minor' 'major' or new version semver
-npm version $1
+npm --no-git-tag-version version $1
 
 new_version=$(cat package.json | grep \"version\" | awk '{print $2}' | tr -d \",)
 
+echo "Bumping version to $new_version"
+
 branch_name=version-update/$new_version
 
-git checkout -b $branch_name
+git checkout -b $branch_name > /dev/null
 
-git push --follow-tags --set-upstream origin $branch_name
+git push --set-upstream origin $branch_name > /dev/null
 
-git checkout master
+git checkout master > /dev/null
 
-git reset --hard HEAD^1
+git reset --hard HEAD^1 > /dev/null
 
 echo ""
 echo "Follow this link to create a PR"
 echo ""
-echo "  https://github.com/artificialsolutions/tie-api-client-js/compare/master...${branch_name}?quick_pull=1"
+echo "  https://github.com/artificialsolutions/tie-api-client-js/compare/master...${branch_name}?quick_pull=1&title=Bump+version+to+${new_version}"
 echo ""
