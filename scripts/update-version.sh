@@ -22,11 +22,13 @@ branch_name=version-update/$new_version
 
 git checkout -b $branch_name > /dev/null
 
+git add .
+
+git commit -m "Bump version to $new_version"
+
 git push --set-upstream origin $branch_name > /dev/null
 
 git checkout master > /dev/null
-
-git reset --hard HEAD^1 > /dev/null
 
 echo ""
 echo "Follow this link to create a PR"
