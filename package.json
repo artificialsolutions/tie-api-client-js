@@ -18,7 +18,10 @@
     "lint": "eslint .",
     "pretest": "npm run lint",
     "test": "mocha --reporter nyan",
-    "test:watch": "mocha --reporter spec --bail --watch"
+    "test:watch": "mocha --reporter spec --bail --watch",
+    "version-update:patch": "./scripts/update-version.sh patch",
+    "version-update:minor": "./scripts/update-version.sh minor",
+    "version-update:major": "./scripts/update-version.sh major"
   },
   "repository": {
     "type": "git",
