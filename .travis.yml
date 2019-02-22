@@ -3,7 +3,7 @@ node_js:
   - "lts/*"
 cache: npm
 script:
-  - npm test
+  - npm test -- --reporter spec
 
 deploy:
   provider: npm
