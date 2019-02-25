@@ -2,34 +2,36 @@
 
 set -e
 
-if [ ! $1 ]; then
-  echo "ERROR: Specify a version update"
+# Can be 'patch' 'minor' 'major' or new version semver
+update_type=$1
+
+if [ ! $update_type ]; then
+  echo "ERROR: Specify a version update type (patch, minor or major)"
   exit 1
 fi
 
+# Ensure you are on the latest version of the master branch
 git checkout master > /dev/null
-
 git pull > /dev/null
 
-# can be 'patch' 'minor' 'major' or new version semver
-npm --no-git-tag-version version $1
-
-new_version=$(cat package.json | grep \"version\" | awk '{print $2}' | tr -d \",)
+# Update package.json and package-lock.json and store the new version
+new_version=$(npm --no-git-tag-version version $update_type)
 
 echo "Bumping version to $new_version"
 
+# Create and checkout a new branch on which to make the update
 branch_name=version-update/$new_version
-
 git checkout -b $branch_name > /dev/null
 
-git add .
-
+# Commit the version update and push to Github
+git add package.json package-lock.json
 git commit -m "Bump version to $new_version"
-
 git push --set-upstream origin $branch_name > /dev/null
 
+# Go back to the master branch
 git checkout master > /dev/null
 
+# Generate a link to quickly create a pull request with the version update
 echo ""
 echo "Follow this link to create a PR"
 echo ""
