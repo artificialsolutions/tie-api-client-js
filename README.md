@@ -9,7 +9,7 @@ This module provides a way of communicating with a Teneo Engine instance either 
 **Example usage**
 
 ``` javascript
-const TIE = require('@artificialsolution/tie-api-client');
+const TIE = require('@artificialsolutions/tie-api-client');
 
 const teneoEngineUrl = 'https://some.teneo/engine-instance';
 const logResponse = (response) => {
