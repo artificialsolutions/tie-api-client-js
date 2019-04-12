@@ -50,7 +50,9 @@ Note that in the browser the session is maintained via cookies and the API canno
 
 **A note on CORS**
 
-TIE API Client needs to send a cookie to the Teneo Engine instance in order for the session to be maintained. This requires CORS communication to be setup between the place where the TIE API Client is and the Teneo Engine instance. The TIE API Client handles this by sending the value of `document.location.origin` to the Teneo Engine instance as a parameter. This parameter is read and validated by the *CORS.jsp* found in the [TIE API Server][tie-api-server] project. You should only have to follow the instructions in the [TIE API Server][tie-api-server] project in order to have the communication to work, regardless of whether you access the Teneo Engine instance directly, via proxy or via a load balancer.
+TIE API Client needs to send a cookie to the Teneo Engine instance in order for the session to be maintained. This requires CORS communication to be setup between the place where the TIE API Client is and the Teneo Engine instance. The TIE API Client handles this by sending the value of `document.location.origin` to the Teneo Engine instance as a parameter.
+
+By default the Teneo Engine includes CORS headers in the responses to browser requests coming from any domain. This means any site can interact with a Teneo Engine. If you want to restrict your engine to only include CORS headers for specific domains, you can add a file called `tieapi_cors_origins.txt` to your solution. You can upload this file in Teneo Studio in the Teneo Resource Manager where you should add it to the `views` folder. The file should contain the list of allowed origin domains (one domain per line, domains should include port numbers if applicable).
 
 ## API Documentation
 
