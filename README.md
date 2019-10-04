@@ -111,7 +111,7 @@ Returns a version of the Teneo Interaction Engine API with the Teneo Engine url 
 ```javascript
 > const teneoApi = TIE.init('https://some.teneo/engine-instance');
 > teneoApi.sendInput(null, { text: 'Sending some text to the prefilled url' })
-    .then(response =>
+    .then(response => {
       console.log(response);
       return teneoApi.close(response.sessionId);
     });
