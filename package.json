@@ -1,7 +1,7 @@
 {
   "name": "@artificialsolutions/tie-api-client",
   "version": "1.3.4",
-  "description": "",
+  "description": "Javascript SDK that handles communication with the Teneo Interaction Engine.",
   "main": "index.js",
   "engines": {
     "node": ">=8.12",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.artificial-solutions.com/scm/addon/tie-api-client-js.git"
+    "url": "https://github.com/artificialsolutions/tie-api-client-js.git"
   },
   "author": "Artificial Solutions",
   "license": "Apache-2.0",
