@@ -170,10 +170,10 @@ Error response:
   3. Run `npm test`
 
 ## Build tie-client.js
-To create a version of tie-client.js that can be included in web based projects run:
+To create a version of `tie-client.js` that can be included in web based projects, run:
 
 ```
 npm run build
 ```
 
-The file will be added to the /dist folder.
+The file will be added to the `/dist` folder.
