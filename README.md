@@ -28,7 +28,7 @@ Note that when used as a Node.js module, you need to manually handle the session
 
 ### Browser
 
-When using the API in the browser, you need to first have a bundled version of the API that you can load on the page. You can generate a bundled version of the API by executing the `npm run build` script (see section on [local development](#setting_up_the_project_for_local_development)). The bundled file will be placed in the *dist/* directory.
+When using the API in the browser, you need to first have a bundled version of the API that you can load on the page. You can generate a bundled version of the API by executing the `npm run build` script (see section on [local development](#setting_up_the_project_for_local_development)). The bundled file will be placed in the `/dist` directory.
 
 **Example usage**
 
@@ -46,7 +46,7 @@ TIE.sendInput(teneoEngineUrl, null, { text: 'Hello there' })
   .then(() => TIE.close(teneoEngineUrl));
 ```
 
-Note that in the browser the session is maintained via cookies and the API cannot manually override the browser's handling of the session. That means that you never need (nor should) pass the session ID when using the API in the browser.
+Gernerally, you should not need to pass the session ID when using the API in the browser. Note however, that `Prevent cross-site tracking` features in some browsers (like Safari) may prevent the browser from sending cookies to the Teneo engine when your site is hosted on a different domain than the Teneo engine. Manually passing on the engine session ID in sendInput method will solve this.
 
 **A note on CORS**
 
@@ -109,12 +109,12 @@ TIE.close(url: string, sessionId: string, [callback: function])
 Returns a version of the Teneo Interaction Engine API with the Teneo Engine url prefilled.
 
 ```javascript
-> const teneoApi = TIE.init('https://some.teneo/engine-instance');
-> teneoApi.sendInput(null, { text: 'Sending some text to the prefilled url' })
-    .then(response =>
-      console.log(response);
-      return teneoApi.close(response.sessionId);
-    });
+const teneoApi = TIE.init('https://some.teneo/engine-instance');
+teneoApi.sendInput(null, { text: 'Sending some text to the prefilled url' })
+  .then(response => {
+    console.log(response);
+    return teneoApi.close(response.sessionId);
+  });
 ```
 
 ##### Signature
@@ -169,4 +169,11 @@ Error response:
   2. Run `npm install`
   3. Run `npm test`
 
-[tie-api-server]: ../../tie-api-server
+## Build tie-client.js
+To create a version of `tie-client.js` that can be included in web based projects, run:
+
+```
+npm run build
+```
+
+The file will be added to the `/dist` folder.
