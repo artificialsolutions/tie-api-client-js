@@ -1,6 +1,6 @@
 {
   "name": "@artificialsolutions/tie-api-client",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Javascript SDK that handles communication with the Teneo Interaction Engine.",
   "main": "index.js",
   "engines": {
