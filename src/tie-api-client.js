@@ -27,7 +27,12 @@ function close(teneoEngineUrl, sessionId, cb) {
   const headers = sessionId ? { 'Cookie': `JSESSIONID=${sessionId}` } : {};
 
   return http.post(endSessionUrl, requestBody(), headers)
-    .then((response) => cb(null, response.body))
+    .then((response) => {
+      cb(null, response.body);
+      //TODO => Delete removeItem line after SaaS fix implemented
+      window.sessionStorage.removeItem('X-Teneo-Session');
+      window.sessionStorage.removeItem('X-Gateway-Session');
+    })
     .catch((error) => cb(error));
 }
 
@@ -53,7 +58,14 @@ function sendInput(teneoEngineUrl, currentSessionId, inputData, cb) {
   const url = appendSessionId(formatEngineUrl(teneoEngineUrl), currentSessionId);
 
   return http.post(url, body, headers)
-    .then((response) => cb(null, response))
+    .then((response) => {
+      cb(null, response);
+      //TODO => Remove Gateway session references when SaaS solution is implemented.
+      let gatewaySession = window.sessionStorage.getItem('X-Gateway-Session');
+      if (gatewaySession) {
+        window.sessionStorage.setItem('X-Teneo-Session', `JSESSIONID=${response.sessionId}; ${gatewaySession}`);
+      }
+    })
     .catch((error) => cb(error));
 }
 
