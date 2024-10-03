@@ -1,5 +1,9 @@
 # TIE API Client for Javascript
 
+> [!IMPORTANT]
+> This project has been retired and archived  
+> If there is a need of continued use / development of this project for your own needs please feel free to fork the project - which will remain here in archived form.
+
 This module provides a way of communicating with a Teneo Engine instance either on the server as a NodeJS module or in a browser loaded through a script node.
 
 ## Usage
